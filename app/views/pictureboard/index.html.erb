@@ -1,0 +1,71 @@
+<h2><%= @album.name %></h2>
+<div class="dropzone">
+  <%= form_for(@post, html: { multipart: true, class: "dropzone dz-clickable" }, url: posts_path) do |f| %>
+    <div class="dz-message">Drop files here or click to upload.
+      <br>
+      <span class="note">(This is just a demo dropzone. Selected files are <strong>not</strong> actually uploaded.)</span>
+
+    </div>
+    <div class="fallback">
+      <%= f.file_field :image %><br>
+      <%= f.submit "Upload" %>
+    </div>
+  <% end %>
+</div>
+<br/>
+<div class="row">
+  <div class="col-md-10" id="picture_panel">
+    <%= render partial: "pictureboard/component_partials/pictureboard", locals: { total_images: @total_images } %>
+  </div>
+</div>
+<script>
+    $(document).ready(function () {
+        var uploader_form;
+        $("#minimize").click(function () {
+            $(".dropzone").slideUp(300, function () {
+            });
+        });
+        $("#maximize").click(function () {
+            $(".dropzone").slideDown(300, function () {
+            });
+        });
+        var getUrlParameter = function getUrlParameter(sParam) {
+            var sPageURL = window.location.search.substring(1),
+                sURLVariables = sPageURL.split('&'),
+                sParameterName,
+                i;
+
+            for (i = 0; i < sURLVariables.length; i++) {
+                sParameterName = sURLVariables[i].split('=');
+
+                if (sParameterName[0] === sParam) {
+                    return typeof sParameterName[1] === undefined ? true : decodeURIComponent(sParameterName[1]);
+                }
+            }
+            return false;
+        };
+        Dropzone.autoDiscover = false;
+        $("#new_post").dropzone({
+            maxFilesize: 10,
+            paramName: "posts[image]",
+            addRemoveLinks: true,
+            sending: function(file, xhr, formData){
+                formData.append('album_id', getUrlParameter('id'));
+            },
+            success: function (file, response) {
+                $(file.previewTemplate).find('.dz-remove').attr('id', response.fileID);
+                $(file.previewElement).addClass("dz-success");
+            },
+            removedfile: function (file) {
+                var id = $(file.previewTemplate).find('.dz-remove').attr('id');
+                $.ajax({
+                    type: 'DELETE',
+                    url: '/uploads/' + id,
+                    success: function (data) {
+                        console.log(data.message);
+                    }
+                });
+            }
+        });
+    });
+</script>

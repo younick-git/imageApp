@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  	<%= favicon_link_tag 'paw.png', type: 'image/png' %> 
+    <title>ImageApp</title>
+    <%= csrf_meta_tags %>
+    <%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track': 'reload' %>
+    <%= javascript_include_tag 'application', 'data-turbolinks-track': 'reload' %>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+		<nav class="navbar navbar-default navbar-inverse">
+			<%= link_to image_tag("paw.png", alt: "logo"), '/', class: 'navbar-brand' %>
+		<div class="container-fluid">
+			<div class="navbar-header">
+				<a class="navbar-brand" href="/index"><b>ImageApp</b></a>
+			</div>
+	
+			<!-- Collect the nav links, forms, and other content for toggling -->
+			<div class="collapse navbar-collapse" id="search_user"></button>
+ 				<% if current_user %>		
+	 				<%= simple_form_for :user, url: users_search_path, remote: true, html: { class: 'navbar-form navbar-left' } do |f| %>
+						<%= f.input :search, placeholder: "Search users", label: false %>
+		        <ul class="list-group" id="searchResult"></ul>
+		        <!-- <div class="clear"></div> -->
+		        <div id="userDetail"></div>
+					<% end %>
+				<% end %>
+				<ul class="nav navbar-nav navbar-right">
+				<li class="dropdown">
+				<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Profile <span class="caret"></span></a>
+				<ul class="dropdown-menu">
+					<li>
+						<%= link_to('Picboard', pictureboard_index_path)  %>
+					</li>
+					<li role="separator" class="divider"></li>
+						<% if user_signed_in? %>
+            <li>
+              <%= link_to('Album', '/index') %>
+            </li>
+            <li role="separator" class="divider"></li>
+							<li>
+							<%= link_to('Logout', destroy_user_session_path, method: :delete) %>        
+							</li>
+						<% else %>
+							<li>
+							<%= link_to('Login', new_user_session_path)  %>  
+							</li>
+						<% end %>
+				</ul>
+			</li>
+				</ul>
+			</div><!-- /.navbar-collapse -->
+		</div><!-- /.container-fluid -->
+	</nav>	
+  </head>
+
+  <body>
+    <div class="container">
+      <% flash.each do |key, value| %>
+          <div class="alert alert-<%= key %>"><%= value %></div>
+      <% end %>
+      <%= yield %>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,18 @@
+<% total_albums.map do |data| %>
+  <a href= <%="/pictureboard?id=#{data.id}" %>>
+    <div class="col-md-3">
+      <div class="row">
+        <div class="thumbnail">
+          <% if Post.where(album_id: data.id).count > 1  %>
+          <img style="width:100%" src="<%= Post.where(album_id: data.id).last.url %>" alt="Not Found">
+            <% else %>
+            <img style="width:100%" src="undefined" alt="Not Found">
+            <% end %>
+          <div class="caption">
+            Album: <b><i> <%= data.name %></i></b> Created:<%= data.created_at %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </a>
+<% end %>
